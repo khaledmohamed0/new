@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+
+<section class="bg-img1 txt-center p-lr-15 p-tb-92"
+style="background-image:url('{% static "images/bg-01.jpg" %}')">
+
+    <h2 class="ltext-105 cl0">
+        My Orders
+    </h2>
+
+</section>
+
+
+<section class="bg0 p-t-80 p-b-120">
+
+<div class="container">
+
+{% if orders %}
+
+{% for order in orders %}
+
+<div class="bor10 p-lr-30 p-t-25 p-b-25 m-b-30">
+
+<div class="flex-w flex-sb-m p-b-15">
+
+<div>
+
+<h4 class="mtext-110">
+
+Order #{{ order.id }}
+
+</h4>
+
+<p class="stext-111">
+
+{{ order.created_at }}
+
+</p>
+
+</div>
+
+<div>
+
+{% if order.status == "pending" %}
+
+<span class="badge badge-warning">
+
+Pending
+
+</span>
+
+{% elif order.status == "processing" %}
+
+<span class="badge badge-info">
+
+Processing
+
+</span>
+
+{% elif order.status == "shipped" %}
+
+<span class="badge badge-primary">
+
+Shipped
+
+</span>
+
+{% elif order.status == "delivered" %}
+
+<span class="badge badge-success">
+
+Delivered
+
+</span>
+
+{% else %}
+
+<span class="badge badge-danger">
+
+Cancelled
+
+</span>
+
+{% endif %}
+
+</div>
+
+</div>
+
+<hr>
+
+{% for item in order.items.all %}
+
+<div class="flex-w flex-t p-b-20">
+
+<div style="width:80px">
+
+<img
+src="{{ item.product.image.url }}"
+style="width:70px;height:90px;object-fit:cover;">
+
+</div>
+
+<div class="p-l-20">
+
+<h6>
+
+{{ item.product.name }}
+
+</h6>
+
+<p>
+
+{{ item.quantity }} × {{ item.price }} EGP
+
+</p>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+<hr>
+
+<div class="flex-w flex-sb-m">
+
+<h5>
+
+Total :
+
+{{ order.total_price }} EGP
+
+</h5>
+
+<a
+href="{% url 'order_detail' order.id %}"
+
+class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04">
+
+View Details
+
+</a>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div class="text-center">
+
+<h3>
+
+No Orders Yet
+
+</h3>
+
+<p>
+
+Start Shopping Now
+
+</p>
+
+<a
+href="{% url 'shop' %}"
+
+class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04">
+
+Shop Now
+
+</a>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</section>
+
+{% endblock %}

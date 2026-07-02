@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+
+<!-- Title Page -->
+<section class="bg-img1 txt-center p-lr-15 p-tb-92"
+         style="background-image: url('{% static "images/bg-01.jpg" %}');">
+    <h2 class="ltext-105 cl0">
+        My Account
+    </h2>
+</section>
+
+<!-- Profile -->
+<section class="bg0 p-t-75 p-b-120">
+    <div class="container">
+
+        <div class="row">
+
+            <!-- Profile Card -->
+            <div class="col-md-4 col-lg-3 p-b-30">
+
+                <div class="bor10 p-4 text-center">
+
+                    {% if profile.image %}
+                        <img src="{{ profile.image.url }}"
+                             class="rounded-circle m-b-20"
+                             style="width:170px;height:170px;object-fit:cover;">
+                    {% else %}
+                        <img src="{% static 'images/default-user.png' %}"
+                             class="rounded-circle m-b-20"
+                             style="width:170px;height:170px;object-fit:cover;">
+                    {% endif %}
+
+                    <h4 class="mtext-108 p-b-5">
+                        {{ request.user.first_name }} {{ request.user.last_name }}
+                    </h4>
+
+                    <p class="stext-111 cl6">
+                        {{ request.user.email }}
+                    </p>
+
+                   
+
+                </div>
+
+            </div>
+
+            <!-- Details -->
+            <div class="col-md-8 col-lg-9">
+
+                <div class="bor10 p-lr-40 p-t-35 p-b-40">
+
+                    <h4 class="mtext-109 p-b-30">
+                        Personal Information
+                    </h4>
+
+                    <table class="table">
+
+                        <tr>
+                            <th>Username</th>
+                            <td>{{ request.user.username }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>First Name</th>
+                            <td>{{ request.user.first_name }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Last Name</th>
+                            <td>{{ request.user.last_name }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Email</th>
+                            <td>{{ request.user.email }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Phone</th>
+                            <td>{{ profile.phone }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Joined</th>
+                            <td>{{ request.user.date_joined|date:"d M Y" }}</td>
+                        </tr>
+
+                    </table>
+
+                    <hr>
+
+                    <h4 class="mtext-109 p-b-25">
+                        Account Statistics
+                    </h4>
+
+                    <div class="row text-center">
+
+                        <div class="col-md-4">
+                            <h2 class="ltext-102">
+                                {{ orders_count }}
+                            </h2>
+
+                            <p class="stext-111">
+                                Orders
+                            </p>
+                        </div>
+
+                        <div class="col-md-4">
+                            <h2 class="ltext-102">
+                                {{ wishlist_count }}
+                            </h2>
+
+                            <p class="stext-111">
+                                Wishlist
+                            </p>
+                        </div>
+
+                        <div class="col-md-4">
+                            <h2 class="ltext-102">
+                                {{ reviews_count }}
+                            </h2>
+
+                            <p class="stext-111">
+                                Reviews
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+
+                        <div class="col-md-6 p-t-15">
+
+                            <a href="{% url 'my-orders' %}"
+                               class="flex-c-m stext-101 cl0 size-114 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                My Orders
+                            </a>
+
+                        </div>
+
+                        <div class="col-md-6 p-t-15">
+
+                            <a href="{% url 'wishlist' %}"
+                               class="flex-c-m stext-101 cl0 size-114 bg3 bor2 hov-btn3 p-lr-15 trans-04">
+                                My Wishlist
+                            </a>
+
+                        </div>
+
+                        <div class="col-md-6 p-t-15">
+
+                            <a href="{% url 'change_password' %}"
+                               class="flex-c-m stext-101 cl0 size-114 bg2 bor2 hov-btn2 p-lr-15 trans-04">
+                                Change Password
+                            </a>
+
+                        </div>
+
+                        <div class="col-md-6 p-t-15">
+
+                           <form action="{% url 'logout' %}" method="POST">
+                               {% csrf_token %}
+                               <button type="submit" class="flex-c-m stext-101 cl0 size-114 bg7 bor2 hov-btn3 p-lr-15 trans-04">
+                                   Logout
+                               </button>
+                           </form>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+
+<!-- Title Page -->
+<section class="bg-img1 txt-center p-lr-15 p-tb-92"
+         style="background-image: url('{% static "images/bg-01.jpg" %}');">
+    <h2 class="ltext-105 cl0">
+        Create Account
+    </h2>
+</section>
+
+<!-- Signup -->
+<section class="bg0 p-t-80 p-b-120">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-md-6">
+
+                <div class="bor10 p-lr-40 p-t-35 p-b-40">
+
+                    <h4 class="mtext-109 p-b-30 text-center">
+                        Create Your Account
+                    </h4>
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        <!-- First Name -->
+                        <div class="p-b-20">
+                            <label class="stext-102 cl3 p-b-10">
+                                First Name
+                            </label>
+
+                            {{ form.first_name }}
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="p-b-20">
+                            <label class="stext-102 cl3 p-b-10">
+                                Last Name
+                            </label>
+
+                            {{ form.last_name }}
+                        </div>
+
+                        <!-- Username -->
+                        <div class="p-b-20">
+                            <label class="stext-102 cl3 p-b-10">
+                                Username
+                            </label>
+
+                            {{ form.username }}
+                        </div>
+
+                        <!-- Email -->
+                        <div class="p-b-20">
+                            <label class="stext-102 cl3 p-b-10">
+                                Email
+                            </label>
+
+                            {{ form.email }}
+                        </div>
+
+                        <!-- Password -->
+                        <div class="p-b-20">
+                            <label class="stext-102 cl3 p-b-10">
+                                Password
+                            </label>
+
+                            {{ form.password1 }}
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="p-b-30">
+                            <label class="stext-102 cl3 p-b-10">
+                                Confirm Password
+                            </label>
+
+                            {{ form.password2 }}
+                        </div>
+
+                        {% if form.errors %}
+                        <div class="alert alert-danger m-b-25">
+                            {{ form.errors }}
+                        </div>
+                        {% endif %}
+
+                        <button
+                            class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04">
+
+                            Create Account
+
+                        </button>
+
+                    </form>
+
+                    <div class="text-center p-t-30">
+
+                        <span class="stext-111">
+                            Already have an account?
+                        </span>
+
+                        <a href="{% url 'login' %}" class="stext-107 cl2 hov-cl1">
+
+                            Login
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
