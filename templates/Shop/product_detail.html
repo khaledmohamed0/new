@@ -217,31 +217,49 @@
 								<div class="col-sm-10 col-md-8 col-lg-6 m-lr-auto">
 									<div class="p-b-30 m-lr-15-sm">
 										<!-- Review -->
+										{% for review in reviews %}
+
 										<div class="flex-w flex-t p-b-68">
-											<div class="wrap-pic-s size-109 bor0 of-hidden m-r-18 m-t-6">
-												<img src="images/avatar-01.jpg" alt="AVATAR">
-											</div>
 
 											<div class="size-207">
+
 												<div class="flex-w flex-sb-m p-b-17">
-													<span class="mtext-107 cl2 p-r-20">
-														Ariana Grande
+
+													<span class="mtext-107 cl2">
+														{{ review.user.username }}
 													</span>
 
-													<span class="fs-18 cl11">
-														<i class="zmdi zmdi-star"></i>
-														<i class="zmdi zmdi-star"></i>
-														<i class="zmdi zmdi-star"></i>
-														<i class="zmdi zmdi-star"></i>
-														<i class="zmdi zmdi-star-half"></i>
+													<span>
+
+														{% for i in "12345" %}
+
+															{% if forloop.counter <= review.rate %}
+																⭐
+															{% else %}
+																☆
+															{% endif %}
+
+														{% endfor %}
+
 													</span>
+
 												</div>
 
-												<p class="stext-102 cl6">
-													Quod autem in homine praestantissimum atque optimum est, id deseruit. Apud ceteros autem philosophos
+												<p>
+
+													{{ review.review }}
+
 												</p>
+
 											</div>
+
 										</div>
+
+										{% empty %}
+
+										<p>No reviews yet.</p>
+
+										{% endfor %}
 										
 										<!-- Add review -->
 										<form class="w-full">
@@ -295,6 +313,7 @@
 						</div>
 					</div>
 				</div>
+
 			</div>
 		</div>
 
