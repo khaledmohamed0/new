@@ -135,14 +135,25 @@
                 <ul class="main-menu-m">
                     <li>
                         <a href="{% url 'home' %}">Home</a>
-                        <span class="arrow-main-menu-m">
-                            <i class="fa fa-angle-right" aria-hidden="true"></i>
-                        </span>
                     </li>
 
                     <li>
                         <a href="{% url 'products' %}">Shop</a>
                     </li>
+
+					<li>
+                        <a href="{% url 'wishlist' %}">Wishlist</a>
+                    </li>
+
+					<li>
+                        <a href="{% url 'my-orders' %}">My Orders</a>
+                    </li>
+
+					<li>
+                        <a href="{% if user.is_authenticated %}{% url 'profile' %}{% else %}{% url 'login' %}{% endif %}">My Account</a>
+                    </li>
+
+
 
                 </ul>
             </div>
