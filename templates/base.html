@@ -741,3 +741,101 @@
 <!--===============================================================================================-->
 	<script src="{% static 'js/main.js' %}"></script>
 
+
+<!--AJAX (quantity)-->
+<script>
+
+function getCookie(name) {
+    let cookieValue = null;
+
+    if (document.cookie && document.cookie !== "") {
+
+        const cookies = document.cookie.split(";");
+
+        for (let cookie of cookies) {
+
+            cookie = cookie.trim();
+
+            if (cookie.startsWith(name + "=")) {
+
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+
+                break;
+            }
+        }
+    }
+
+    return cookieValue;
+}
+
+const csrftoken = getCookie("csrftoken");
+
+
+function updateQuantity(itemId, action, input) {
+
+    fetch("/cart/update-quantity/", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken,
+        },
+
+        body: JSON.stringify({
+            item_id: itemId,
+            action: action
+        })
+
+    })
+    .then(response => response.json())
+    .then(data => {
+
+		if (data.success) {
+
+			input.value = data.quantity;
+
+			document.getElementById(`item-total-${itemId}`).innerText =
+				data.item_total + " EGP";
+
+		}
+
+	});
+
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll(".btn-num-product-up").forEach(button => {
+
+        button.addEventListener("click", function () {
+
+            const input = this.parentElement.querySelector(".num-product");
+
+            const itemId = input.dataset.itemId;
+
+            updateQuantity(itemId, "increase", input);
+
+        });
+
+    });
+
+
+    document.querySelectorAll(".btn-num-product-down").forEach(button => {
+
+        button.addEventListener("click", function () {
+
+            const input = this.parentElement.querySelector(".num-product");
+
+            const itemId = input.dataset.itemId;
+
+            updateQuantity(itemId, "decrease", input);
+
+        });
+
+    });
+
+});
+
+</script>

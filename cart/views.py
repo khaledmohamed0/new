@@ -3,6 +3,8 @@ from django.shortcuts import redirect, get_object_or_404
 from .models import Cart,Cart_item,Wishlist,Wishlist_item
 from shop.models import Product
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+import json
 
 @login_required(login_url="login")
 def cart(request):
@@ -12,6 +14,10 @@ def cart(request):
 
     if cart:
         cart_items = cart.items.select_related("product").all()
+        
+        for item in cart_items:
+            item.total_price = item.product.price * item.quantity
+
 
         subtotal = sum(
             item.product.price * item.quantity
@@ -123,3 +129,40 @@ def add_to_wishlist(request, product_id):
         wishlist_item.save()
 
     return redirect("wishlist")
+
+
+@login_required(login_url="login")
+def update_cart_quantity(request):
+
+    data = json.loads(request.body)
+
+    item_id = data.get("item_id")
+    action = data.get("action")
+    
+
+    item = Cart_item.objects.get(id=item_id)
+
+    if action == "increase":
+        item.quantity += 1
+    elif action == "decrease":
+        item.quantity -= 1
+
+    item.save()
+
+    cart = item.cart
+
+    cart_items = cart.items.select_related("product").all()
+
+
+
+    
+
+    return JsonResponse({
+    "success": True,
+    "quantity": item.quantity,
+    "item_total": item.product.price * item.quantity,
+    
+
+    
+    
+})
