@@ -88,7 +88,7 @@ def checkout(request):
         "total": total,
     }
 
-    return render(request, "Order/checkout.html", context)
+    return render(request, "order/checkout.html", context)
 
 
 
@@ -105,7 +105,7 @@ def my_orders(request):
 
     return render(
         request,
-        "Order/myorders.html",
+        "order/myorders.html",
         {
             "orders": orders
         }
@@ -134,6 +134,6 @@ def order_detail(request, id):
 
     return render(
         request,
-        "Order/orderdetail.html",
+        "order/orderdetail.html",
         context
     )

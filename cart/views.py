@@ -40,7 +40,7 @@ def cart(request):
         "total": total,
     }
 
-    return render(request, "Cart/cart.html", context)
+    return render(request, "cart/cart.html", context)
 
 @login_required(login_url="login")
 def add_to_cart(request, product_id):
