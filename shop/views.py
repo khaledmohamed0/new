@@ -10,7 +10,7 @@ from .forms import ReviewForm
 from django.core.paginator import Paginator
 
 def products(request):
-    products = Product.objects.all()
+    products = Product.objects.all().order_by("-id")
 
     paginator = Paginator(products, 12)
 
