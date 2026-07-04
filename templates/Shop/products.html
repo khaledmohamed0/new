@@ -226,7 +226,7 @@
 
 			<div class="row isotope-grid">
 
-                {% for product in products %}
+                {% for product in page_obj %}
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
 					<!-- Block2 -->
 					<div class="block2">
@@ -279,9 +279,41 @@
 
 			<!-- Load more -->
 			<div class="flex-c-m flex-w w-full p-t-45">
-				<a href="#" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
-					Load More
-				</a>
+
+				{% if page_obj.has_previous %}
+					<a href="?page={{ page_obj.previous_page_number }}"
+					class="flex-c-m how-pagination1 trans-04 m-all-7">
+						Previous
+					</a>
+				{% endif %}
+
+				{% for page in page_obj.paginator.page_range %}
+
+					{% if page == page_obj.number %}
+
+						<a href="?page={{ page }}"
+						class="flex-c-m how-pagination1 trans-04 m-all-7 active-pagination1">
+							{{ page }}
+						</a>
+
+					{% else %}
+
+						<a href="?page={{ page }}"
+						class="flex-c-m how-pagination1 trans-04 m-all-7">
+							{{ page }}
+						</a>
+
+					{% endif %}
+
+				{% endfor %}
+
+				{% if page_obj.has_next %}
+					<a href="?page={{ page_obj.next_page_number }}"
+					class="flex-c-m how-pagination1 trans-04 m-all-7">
+						Next
+					</a>
+				{% endif %}
+
 			</div>
 		</div>
 	</div>

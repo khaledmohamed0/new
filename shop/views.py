@@ -7,12 +7,21 @@ from django.http import JsonResponse
 from .models import Product,Review
 from django.db.models import Avg
 from .forms import ReviewForm
+from django.core.paginator import Paginator
 
 def products(request):
     products = Product.objects.all()
+
+    paginator = Paginator(products, 12)
+
+    page_number = request.GET.get("page")
+
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "products": products,
+        "page_obj": page_obj,
     }
+
     return render(request, "shop/products.html", context)
 
 def product_detail(request, id):
