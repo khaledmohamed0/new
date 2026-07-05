@@ -1,0 +1,76 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+
+    <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
+
+        <h4>
+            Product Analytics
+        </h4>
+
+       <a href="{% url 'export_excel' %}" class="btn btn-success">
+            Export Excel
+        </a>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle">
+
+            <thead class="table-dark">
+
+            <tr>
+
+                <th>Product</th>
+                <th>Price</th>
+                <th>Sold</th>
+                <th>Revenue</th>
+                <th>Gross Sales</th>
+
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for item in products %}
+
+            <tr>
+
+                <td>{{ item.product.name }}</td>
+
+                <td>
+                    {{ item.product.price }}
+                </td>
+
+                <td>
+                    {{ item.sold }}
+                </td>
+
+                <td>
+                    {{ item.revenue }}
+                </td>
+                <td>
+                    {{ item.gross_sales }}
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+{% endblock %}

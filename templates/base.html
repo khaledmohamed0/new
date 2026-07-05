@@ -60,6 +60,22 @@
                                     <a href="{% url 'products' %}">Shop</a>
                                 </li>
 
+								{% if user.is_staff %}
+
+									<li>
+										<a href="{% url 'admin:index' %}">
+											Admin
+										</a>
+									</li>
+
+									<li>
+										<a href="{% url 'dashboard' %}">
+											Dashboard
+										</a>
+									</li>
+
+								{% endif %}
+
                             </ul>
                         </div>	
 
@@ -152,6 +168,15 @@
 					<li>
                         <a href="{% if user.is_authenticated %}{% url 'profile' %}{% else %}{% url 'login' %}{% endif %}">My Account</a>
                     </li>
+					{% if user.is_staff %}
+						<li>
+							<a href="{% url 'admin:index' %}" >Admin</a>
+						</li>
+
+						<li>
+							<a href="{% url 'dashboard' %}">Dashboard</a>
+						</li>
+					{% endif %}
 
 
 

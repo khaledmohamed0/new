@@ -1,0 +1,200 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block title %}
+Analytics
+{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">Analytics</h2>
+
+<div class="row g-4">
+
+    <!-- Total Revenue -->
+
+    <div class="col-lg-4">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <h6>Total Revenue</h6>
+
+                <h2>{{ total_revenue }} EGP</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Month Revenue -->
+
+    <div class="col-lg-4">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <h6>This Month</h6>
+
+                <h2>{{ month_revenue }} EGP</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Today -->
+
+    <div class="col-lg-4">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <h6>Today</h6>
+
+                <h2>{{ today_revenue }} EGP</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm mt-4">
+
+    <div class="card-body">
+
+        <h4 class="mb-4">
+            Revenue Overview
+        </h4>
+
+        <canvas id="revenueChart"></canvas>
+
+    </div>
+
+</div>
+
+{% block extra_js %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const ctx = document.getElementById("revenueChart");
+
+new Chart(ctx, {
+
+    type: "line",
+
+    data: {
+
+        labels: [
+
+            "Jan","Feb","Mar","Apr",
+
+            "May","Jun","Jul","Aug",
+
+            "Sep","Oct","Nov","Dec"
+
+        ],
+
+        datasets: [{
+
+            label: "Revenue",
+
+            data: {{ monthly_revenue|safe }},
+
+            borderWidth: 3,
+
+            tension: 0.35,
+
+            fill: true
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+
+                display: false
+
+            }
+
+        }
+
+    }
+
+});
+
+</script>
+
+
+{% endblock %}
+
+<div class="card shadow-sm mt-4">
+
+    <div class="card-header">
+
+        <h4>Top Selling Products</h4>
+
+    </div>
+
+    <div class="card-body p-0">
+
+        <table class="table table-hover mb-0">
+
+            <thead>
+
+                <tr>
+
+                    <th>Product</th>
+
+                    <th>Sold</th>
+
+                    <th>Orders</th>
+
+                    <th>Revenue</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for product in top_products %}
+
+                <tr>
+
+                    <td>{{ product.product__name }}</td>
+
+                    <td>{{ product.pieces_sold }}</td>
+
+                    <td>{{ product.orders_count }}</td>
+
+                    <td>{{ product.revenue }} EGP</td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block title %}
+Reviews
+{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">Reviews</h2>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <table class="table table-hover align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th>Customer</th>
+
+                    <th>Product</th>
+
+                    <th>Rating</th>
+
+                    <th>Review</th>
+
+                    <th>Date</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for review in page_obj %}
+
+                <tr>
+
+                    <td>{{ review.user.username }}</td>
+
+                    <td>{{ review.product.name }}</td>
+
+                    <td>
+
+                        {% for i in "12345" %}
+
+                            {% if forloop.counter <= review.rate %}
+                                ⭐
+                            {% else %}
+                                ☆
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </td>
+
+                    <td>{{ review.review }}</td>
+
+                    <td>{{ review.created_at|date:"d M Y" }}</td>
+
+                </tr>
+
+            {% empty %}
+
+                <tr>
+
+                    <td colspan="5">
+
+                        No Reviews Found
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}
