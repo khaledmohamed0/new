@@ -5,6 +5,8 @@ from shop.models import Product
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
+from django.views.decorators.http import require_POST
+from shop.models import ProductVariant
 
 @login_required(login_url="login")
 def cart(request):
@@ -13,14 +15,14 @@ def cart(request):
     delivery_fee = 60
 
     if cart:
-        cart_items = cart.items.select_related("product").all()
+        cart_items = cart.items.select_related("product_variant","product_variant__product").all()
         
         for item in cart_items:
-            item.total_price = item.product.price * item.quantity
+            item.total_price = item.product_variant.product.price * item.quantity
 
 
         subtotal = sum(
-            item.product.price * item.quantity
+            item.product_variant.product.price * item.quantity
             for item in cart_items
         )
 
@@ -43,29 +45,79 @@ def cart(request):
     return render(request, "cart/cart.html", context)
 
 @login_required(login_url="login")
-def add_to_cart(request, product_id):
+@require_POST
+def add_to_cart(request):
 
-    product = get_object_or_404(Product, id=product_id)
-    quantity = int(request.POST.get("quantity", 1))
+    data = json.loads(request.body)
+
+    variant_id = data.get("variant_id")
+    quantity = int(data.get("quantity", 1))
+
+    variant = get_object_or_404(
+
+        ProductVariant,
+
+        id=variant_id,
+
+        is_active=True
+
+    )
+
+    if variant.stock == 0:
+
+        return JsonResponse({
+
+            "success": False,
+
+            "message": "Out of Stock"
+
+        })
 
     cart, created = Cart.objects.get_or_create(
+
         user=request.user
+
     )
 
     cart_item, created = Cart_item.objects.get_or_create(
+
         cart=cart,
-        product=product,
+
+        product_variant=variant,
+
         defaults={
+
             "quantity": quantity
+
         }
+
     )
 
     if not created:
+
+        if cart_item.quantity + quantity > variant.stock:
+
+            return JsonResponse({
+
+                "success": False,
+
+                "message": "Stock limit reached"
+
+            })
+
         cart_item.quantity += quantity
+
         cart_item.save()
 
-    return redirect("cart")
+    return JsonResponse({
 
+        "success": True,
+
+        "message": "Added Successfully",
+
+        "cart_count": cart.items.count()
+
+    })
 def remove_from_cart(request, item_id):
     cart_item = get_object_or_404(
         Cart_item,
@@ -82,7 +134,7 @@ def wishlist(request):
     wishlist = Wishlist.objects.filter(user=request.user).first()
 
     if wishlist:
-        wishlist_items = wishlist.wishlist_items.select_related("product").all()
+        wishlist_items = wishlist.wishlist_items.select_related("product","wishlist").all()
 
     else:
         wishlist_items = []
@@ -151,7 +203,7 @@ def update_cart_quantity(request):
 
     cart = item.cart
 
-    cart_items = cart.items.select_related("product").all()
+    cart_items = cart.items.select_related("product_variant", "product_variant__product").all()
 
 
 
@@ -160,7 +212,7 @@ def update_cart_quantity(request):
     return JsonResponse({
     "success": True,
     "quantity": item.quantity,
-    "item_total": item.product.price * item.quantity,
+    "item_total": item.product_variant.product.price * item.quantity,
     
 
     

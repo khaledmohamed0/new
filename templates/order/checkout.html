@@ -138,18 +138,18 @@
                         <div class="flex-w flex-t p-b-20">
 
                             <div style="width:70px;">
-                                <img src="{{ item.product.image.url }}"
+                                <img src="{{ item.product_variant.product.image.url }}"
                                      style="width:60px;height:80px;object-fit:cover;">
                             </div>
 
                             <div class="p-l-15" style="width:calc(100% - 70px);">
 
                                 <div class="stext-102 cl3">
-                                    {{ item.product.name }}
+                                    {{ item.product_variant.product.name }}
                                 </div>
 
                                 <div class="stext-111 cl6">
-                                    {{ item.quantity }} × {{ item.product.price }} EGP
+                                    {{ item.quantity }} × {{ item.product_variant.product.price }} EGP
                                 </div>
 
                             </div>

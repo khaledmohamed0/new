@@ -1,5 +1,5 @@
 from django.db import models
-from shop.models import Product
+from shop.models import Product, ProductVariant
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 
@@ -64,8 +64,8 @@ class OrderItem(models.Model):
         related_name="items"
     )
 
-    product = models.ForeignKey(
-        Product,
+    product_variant = models.ForeignKey(
+        ProductVariant,
         on_delete=models.CASCADE
     )
 
@@ -77,4 +77,9 @@ class OrderItem(models.Model):
     )
 
     def __str__(self):
-        return f"{self.product.name} x {self.quantity}"
+        return (
+            f"{self.product_variant.product.name}"
+            f" - {self.product_variant.color.name}"
+            f" - {self.product_variant.size.name}"
+            f" x {self.quantity}"
+        )

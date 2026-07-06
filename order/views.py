@@ -3,6 +3,10 @@ from django.shortcuts import render, redirect
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from django.db import transaction
+from django.db.models import F
+from django.contrib import messages
+from shop.models import ProductVariant
 
 
 from cart.models import Cart
@@ -18,19 +22,35 @@ def checkout(request):
 
     cart = Cart.objects.get(user=request.user)
 
-    cart_items = cart.items.select_related("product").all()
+    cart_items = cart.items.select_related("product_variant").all()
 
     if not cart_items.exists():
         return redirect("cart")
 
     subtotal = sum(
-        item.product.price * item.quantity
+        item.product_variant.product.price * item.quantity
         for item in cart_items
     )
 
     total = subtotal + DELIVERY_FEE
 
     if request.method == "POST":
+        for item in cart_items:
+
+            variant = item.product_variant
+
+            variant.refresh_from_db()
+
+            if item.quantity > variant.stock:
+
+                messages.error(
+                    request,
+                    f"Only {variant.stock} pieces available for "
+                    f"{variant.product.name} "
+                    f"({variant.color.name} / {variant.size.name})"
+                )
+
+                return redirect("cart")
 
         order = Order.objects.create(
 
@@ -65,17 +85,25 @@ def checkout(request):
 
                     order=order,
 
-                    product=item.product,
+                    product_variant=item.product_variant,
 
                     quantity=item.quantity,
 
-                    price=item.product.price,
+                    price=item.product_variant.product.price,
 
                 )
 
             )
 
         OrderItem.objects.bulk_create(order_items)
+
+        for item in cart_items:
+
+            ProductVariant.objects.filter(
+                id=item.product_variant.id
+            ).update(
+                stock=F("stock") - item.quantity
+            )
 
         cart_items.delete()
 
@@ -99,8 +127,13 @@ def my_orders(request):
     orders = (
         Order.objects
         .filter(user=request.user)
-        .prefetch_related("items__product")
         .order_by("-created_at")
+        .prefetch_related(
+            "items__product_variant",
+            "items__product_variant__product",
+            "items__product_variant__color",
+            "items__product_variant__size",
+        )
     )
 
     return render(
@@ -117,7 +150,12 @@ def my_orders(request):
 def order_detail(request, id):
 
     order = get_object_or_404(
-        Order.objects.prefetch_related("items__product"),
+        Order.objects.prefetch_related(
+                        "items__product_variant",
+                        "items__product_variant__product",
+                        "items__product_variant__color",
+                        "items__product_variant__size",
+                    ),
         id=id,
         user=request.user
     )

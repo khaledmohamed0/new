@@ -1,330 +1,518 @@
 {% extends "base.html" %}
+
 {% load static %}
+
+{% block extra_css %}
+	<style>
+		.product-gallery .thumb{
+
+			width:80px;
+
+			height:80px;
+
+			object-fit:cover;
+
+			cursor:pointer;
+
+			border-radius:10px;
+
+			border:2px solid transparent;
+
+			transition:.3s;
+
+		}
+
+		.product-gallery .thumb:hover{
+
+			border-color:black;
+
+		}
+
+		.product-gallery .thumb.active{
+
+			border-color:black;
+
+		}
+
+		.main-image img{
+
+			border-radius:15px;
+
+		}
+		.color-btn{
+
+			width:35px;
+
+			height:35px;
+
+			border-radius:50%;
+
+			border:2px solid #ddd;
+
+			cursor:pointer;
+
+			transition:.3s;
+
+		}
+
+		.color-btn:hover{
+
+			transform:scale(1.15);
+
+		}
+
+		.color-btn.active{
+
+			border:3px solid black;
+
+		}
+		.size-btn{
+
+			width:55px;
+
+			height:55px;
+
+			border:1px solid #ddd;
+
+			background:white;
+
+			border-radius:12px;
+
+			font-weight:600;
+
+			font-size:18px;
+
+			transition:.25s;
+
+			cursor:pointer;
+
+		}
+
+		.size-btn:hover{
+
+			background:black;
+
+			color:white;
+
+			border-color:black;
+
+		}
+
+		.size-btn.active{
+
+			background:black;
+
+			color:white;
+
+			border-color:black;
+
+		}
+		.star{
+
+			font-size:30px;
+
+			color:#d1d5db;
+
+			cursor:pointer;
+
+			transition:.2s;
+
+			margin-right:6px;
+
+		}
+
+		.star:hover{
+
+			transform:scale(1.15);
+
+		}
+
+		.star.active{
+
+			color:#ffc107;
+
+		}
+		.quantity-box{
+
+			display:flex;
+
+			align-items:center;
+
+			border:1px solid #ddd;
+
+			border-radius:10px;
+
+			overflow:hidden;
+
+		}
+
+		.qty-btn{
+
+			width:45px;
+
+			height:45px;
+
+			border:none;
+
+			background:#f5f5f5;
+
+			font-size:20px;
+
+			transition:.3s;
+
+		}
+
+		.qty-btn:hover{
+
+			background:black;
+
+			color:white;
+
+		}
+
+		#quantityInput{
+
+			width:55px;
+
+			text-align:center;
+
+			border:none;
+
+			outline:none;
+
+			font-weight:bold;
+
+		}
+	</style>
+{% endblock %}
+
 {% block body %}
-<div class="container">
-		<div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
-			<a href="{% url 'home' %}" class="stext-109 cl8 hov-cl1 trans-04">
-				Home
-				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
-			</a>
 
-			<a href="{% url 'products' %}" class="stext-109 cl8 hov-cl1 trans-04">
-				shop
-				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
-			</a>
 
-			<span class="stext-109 cl4">
-                {{product.name}}
-			</span>
-		</div>
-	</div>
+<div class="container py-5">
 
-    
-	<!-- Product Detail -->
-	<section class="sec-product-detail bg0 p-t-65 p-b-60">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-6 col-lg-7 p-b-30">
-					<div class="p-l-25 p-r-30 p-lr-0-lg">
-						<div class="wrap-slick3 flex-sb flex-w">
-							<div class="wrap-slick3-dots"></div>
-							<div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
+    <div class="row g-5">
 
-							<div class="slick3 gallery-lb">
-                                {% for image in images %}
-                                
-								<div class="item-slick3" data-thumb="{{ image.images.url }}">
-									<div class="wrap-pic-w pos-relative">
-										<img src="{{ image.images.url }}" alt="IMG-PRODUCT">
+        <!-- Left Side -->
 
-										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{ image.images.url }}">
-											<i class="fa fa-expand"></i>
-										</a>
-									</div>
-								</div>
-                                {% endfor %}
+        <div class="col-lg-6">
+			<div class="product-gallery">
 
-							
-							</div>
-						</div>
-					</div>
+				<div class="main-image mb-3">
+
+					<img
+						id="mainImage"
+						src="{{ product.image.url }}"
+						class="img-fluid rounded shadow-sm w-100"
+					>
+
 				</div>
-					
-				<div class="col-md-6 col-lg-5 p-b-30">
-					<div class="p-r-50 p-t-5 p-lr-0-lg">
-						<h4 class="mtext-105 cl2 js-name-detail p-b-14">
-							{{product.name}}
-						</h4>
 
-						<span class="mtext-106 cl2">
-							{{product.price}} EGP
-						</span>
+				<div class="d-flex flex-wrap gap-2">
 
-						
-						
-						<!--  -->
-						<div class="p-t-33">
-							<div class="flex-w flex-r-m p-b-10">
-								<div class="size-203 flex-c-m respon6">
-									Size
-								</div>
+					<img
+						src="{{ product.image.url }}"
+						class="thumb active"
+						onclick="changeImage(this)"
+					>
 
-								<div class="size-204 respon6-next">
-									<div class="rs1-select2 bor8 bg0">
-										<select class="js-select2" name="time">
-											<option>Choose an option</option>
-											<option>Size S</option>
-											<option>Size M</option>
-											<option>Size L</option>
-											<option>Size XL</option>
-										</select>
-										<div class="dropDownSelect2"></div>
-									</div>
-								</div>
-							</div>
+					{% for image in images %}
 
-							<div class="flex-w flex-r-m p-b-10">
-								<div class="size-203 flex-c-m respon6">
-									Color
-								</div>
+					<img
+						src="{{ image.images.url }}"
+						class="thumb"
+						onclick="changeImage(this)"
+					>
 
-								<div class="size-204 respon6-next">
-									<div class="rs1-select2 bor8 bg0">
-										<select class="js-select2" name="time">
-											<option>Choose an option</option>
-											<option>Red</option>
-											<option>Blue</option>
-											<option>White</option>
-											<option>Grey</option>
-										</select>
-										<div class="dropDownSelect2"></div>
-									</div>
-								</div>
-							</div>
+					{% endfor %}
 
-							<form action="{% url 'add_to_cart' product.id %}" method="POST">
-								{% csrf_token %}
+				</div>
+			</div>
 
-								<div class="flex-w flex-r-m p-b-10">
-									<div class="size-204 flex-w flex-m respon6-next">
+        </div>
 
-										<div class="wrap-num-product flex-w m-r-20 m-tb-10">
-											<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-												<i class="fs-16 zmdi zmdi-minus"></i>
-											</div>
+        <!-- Right Side -->
 
-											<input
-												class="mtext-104 cl3 txt-center num-product"
-												type="number"
-												name="quantity"
-												value="1"
-												min="1"
-											>
+        <div class="col-lg-6">
+			<h2 class="fw-bold mb-3">
 
-											<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-												<i class="fs-16 zmdi zmdi-plus"></i>
-											</div>
-										</div>
+				{{ product.name }}
 
-										<button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-											Add To Cart
-										</button>
+			</h2>
 
-									</div>
-								</div>
-							</form>
-						</div>
+			<div class="mb-3">
 
-						<!--  -->
+				⭐ {{ average_rating|floatformat:1 }}
+
+				({{ review_count }} Reviews)
+
+			</div>
+
+			<h3 class="text-dark fw-bold mb-4">
+
+				EGP {{ product.price }}
+
+			</h3>
+
+			<p class="text-muted mb-4">
+
+				{{ product.description }}
+
+			</p>
+
+			<!-- Color -->
+
+			<div class="mb-4">
+
+				<h5 class="mb-3">
+
+					Color
+
+				</h5>
+
+				<div class="d-flex gap-2">
+
+					{% for color in colors %}
+
+					<button
+						class="color-btn"
+						data-color="{{ color.id }}"
+						style="
+							background: {{ color.hex_code }};
+							width:40px;
+							height:40px;
+							border-radius:50%;
+							border:2px solid #ddd;
+						"
+					></button>
+
+					{% endfor %}
+
+				</div>
+
+			</div>
+
+
+			<!-- Size -->
+
+			<div class="mb-4">
+
+				<h5 class="mb-3">
+
+					Size
+
+				</h5>
+
+				<div
+					id="sizesContainer"
+					class="d-flex flex-wrap gap-2"
+				>
+
+				</div>
+
+			</div>
+
+			<div class="d-flex align-items-center ">
+
+				<div class="quantity-box me-4">
+
+					<button
+						type="button"
+						id="minusBtn"
+						class="qty-btn"
+					>
+
+						-
+
+					</button>
+
+					<input
+						id="quantityInput"
+						type="number"
+						value="1"
+						min="1"
+						readonly
+					>
+
+					<button
+						type="button"
+						id="plusBtn"
+						class="qty-btn"
+					>
+
+						+
+
+					</button>
+
+				</div>
+
+				<button
+					type="button"
+					id="addToCartBtn"
+					class="btn btn-dark px-5 py-3 rounded-3"
+				>
+
+					<i class="fa-solid fa-cart-shopping me-2" id="addToCartBtn"></i>
+
+					Add To Cart
+
+				</button>
+
+			</div>
+
+			<hr class="my-5">
+
+			<h3 class="mb-4">
+
+				Customer Reviews
+
+			</h3>
+
+			<div class="mb-4">
+
+				<div class="mb-3">
+
+				⭐ {{ average_rating|floatformat:1 }}
+
+					({{ review_count }} Reviews)
+
+				</div>
+
 				
-					</div>
-				</div>
-			</div>
-
-			<div class="bor10 m-t-50 p-t-43 p-b-40">
-				<!-- Tab01 -->
-				<div class="tab01">
-					<!-- Nav tabs -->
-					<ul class="nav nav-tabs" role="tablist">
-						<li class="nav-item p-b-10">
-							<a class="nav-link active" data-toggle="tab" href="#description" role="tab">Description</a>
-						</li>
-
-						<li class="nav-item p-b-10">
-							<a class="nav-link" data-toggle="tab" href="#information" role="tab">Additional information</a>
-						</li>
-
-						<li class="nav-item p-b-10">
-							<a class="nav-link" data-toggle="tab" href="#reviews" role="tab">Reviews ({{review_count}})</a>
-						</li>
-					</ul>
-
-					<!-- Tab panes -->
-					<div class="tab-content p-t-43">
-						<!-- - -->
-						<div class="tab-pane fade show active" id="description" role="tabpanel">
-							<div class="how-pos2 p-lr-15-md">
-								<p class="stext-102 cl6">
-									{{product.description}}
-								</p>
-							</div>
-						</div>
-
-						<!-- - -->
-						<div class="tab-pane fade" id="information" role="tabpanel">
-							<div class="row">
-								<div class="col-sm-10 col-md-8 col-lg-6 m-lr-auto">
-									<ul class="p-lr-28 p-lr-15-sm">
-							
-
-										<li class="flex-w flex-t p-b-7">
-											<span class="stext-102 cl3 size-205">
-												Materials
-											</span>
-
-											<span class="stext-102 cl6 size-206">
-												100% cotton
-											</span>
-										</li>
-
-										<li class="flex-w flex-t p-b-7">
-											<span class="stext-102 cl3 size-205">
-												Color
-											</span>
-
-											<span class="stext-102 cl6 size-206">
-												{{product.color}}
-											</span>
-										</li>
-
-										<li class="flex-w flex-t p-b-7">
-											<span class="stext-102 cl3 size-205">
-												Size
-											</span>
-
-											<span class="stext-102 cl6 size-206">
-												{{product.size}}
-											</span>
-										</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-
-						<!-- - -->
-						<div class="tab-pane fade" id="reviews" role="tabpanel">
-							<div class="row">
-								<div class="col-sm-10 col-md-8 col-lg-6 m-lr-auto">
-									<div class="p-b-30 m-lr-15-sm">
-										<!-- Review -->
-										{% for review in reviews %}
-
-										<div class="flex-w flex-t p-b-68" id="reviews-container" >
-
-											<div class="size-207">
-
-												<div class="flex-w flex-sb-m p-b-17">
-
-													<span class="mtext-107 cl2">
-														{{ review.user.username }}
-													</span>
-
-													<span>
-
-														{% for i in "12345" %}
-
-															{% if forloop.counter <= review.rate %}
-																⭐
-															{% else %}
-																☆
-															{% endif %}
-
-														{% endfor %}
-
-													</span>
-
-												</div>
-
-												<p>
-
-													{{ review.review }}
-
-												</p>
-
-											</div>
-
-										</div>
-
-										{% empty %}
-
-										<p>No reviews yet.</p>
-
-										{% endfor %}
-										
-										<!-- Add review -->
-										<form class="w-full" method = "POST" action = "{% url 'add_review' product.id %}" id="review-form">
-											{% csrf_token %}
-											<h5 class="mtext-108 cl2 p-b-7">
-												Add a review
-											</h5>
-
-											<p class="stext-102 cl6">
-												Your email address will not be published. Required fields are marked *
-											</p>
-
-											<div class="flex-w flex-m p-t-50 p-b-23">
-												<span class="stext-102 cl3 m-r-16">
-													Your Rating
-												</span>
-
-												<span class="wrap-rating fs-18 cl11 pointer">
-													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
-													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
-													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
-													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
-													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
-													{{ form.rate }}
-												</span>
-											</div>
-
-											<div class="row p-b-25">
-												<div class="col-12 p-b-5">
-													<label class="stext-102 cl3" for="review">Your review</label>
-													{{ form.review }}
-												</div>
-
-												
-
-												
-											</div>
-
-											<button class="flex-c-m stext-101 cl0 size-112 bg7 bor11 hov-btn3 p-lr-15 trans-04 m-b-10">
-												Submit
-											</button>
-										</form>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
 
 			</div>
-		</div>
 
-		<div class="bg6 flex-c-m flex-w size-302 m-t-73 p-tb-15">
-			<span class="stext-107 cl6 p-lr-25">
-				SKU: {{product.sku}}
-			</span>
+			<form
+				id="review-form"
+				action="{% url 'add_review' product.id %}"
+				method="POST"
+			>
+
+				{% csrf_token %}
+
+				<div class="mb-3">
+
+					<label class="form-label">
+
+						Rating
+
+					</label>
+
+					<div id="starRating">
+
+						{% for i in "12345" %}
+
+							   	<i
+									class="fa fa-star-o star"
+									data-rate="{{ forloop.counter }}"
+								></i>
+
+						{% endfor %}
+
+					</div>
+
+					{{ form.rate }}
+
+				</div>
+
+				<div class="mb-3">
+
+					{{ form.review }}
+
+				</div>
+
+				<button
+					class="btn btn-dark"
+					type="submit"
+				>
+
+					Submit Review
+
+				</button>
+
+			</form>
+
+			<div
+				id="reviews-container"
+				class="mt-5"
+			>
+
+			{% for review in reviews %}
+
+			<div class="border rounded p-3 mb-3">
+
+				<h5>
+
+					{{ review.user.username }}
+
+				</h5>
+
+				<div class="mb-2">
+
+					{% for i in "12345" %}
+
+						{% if forloop.counter <= review.rate %}
+
+							⭐
+
+						{% else %}
+
+							☆
+
+						{% endif %}
+
+					{% endfor %}
+
+				</div>
+
+				<p>
+
+					{{ review.review }}
+
+				</p>
+
+				<small class="text-muted">
+
+					{{ review.created_at|date:"d M Y" }}
+
+				</small>
+
+			</div>
+
+			{% endfor %}
+
+			</div>
+			
 
 			
+		
+
 		</div>
-	</section>
+
+	</div>
+</div>
 
 
 
 
 <script>
+	let selectedVariant = null;
+
+
+	function changeImage(element){
+
+		document
+			.getElementById("mainImage")
+			.src = element.src;
+
+		document
+			.querySelectorAll(".thumb")
+			.forEach(img=>img.classList.remove("active"));
+
+		element.classList.add("active");
+
+	}
+
 	document.getElementById("review-form").addEventListener("submit", function(e){
 
 	e.preventDefault();
@@ -379,6 +567,265 @@
 		);
 
 		form.reset();
+
+		});
+
+	});
+
+	const variants = JSON.parse(
+		'{{ variants_json|escapejs }}'
+	);
+
+	const colorButtons = document.querySelectorAll(".color-btn");
+
+	const sizeContainer = document.getElementById("sizesContainer");
+
+	let selectedColor = null;
+
+	colorButtons.forEach(button => {
+
+		button.addEventListener("click", () => {
+
+			colorButtons.forEach(
+				b => b.classList.remove("active")
+			);
+
+			button.classList.add("active");
+
+			selectedColor = Number(button.dataset.color);
+
+			renderSizes();
+
+		});
+
+	});
+
+	function renderSizes() {
+
+		sizeContainer.innerHTML = "";
+
+		const filtered = variants.filter(
+			v => v.color_id == selectedColor
+		);
+
+		filtered.forEach(variant => {
+
+			sizeContainer.innerHTML += `
+
+				<button
+					type="button"
+					class="size-btn"
+					data-variant="${variant.id}"
+				>
+
+					${variant.size}
+
+				</button>
+
+			`;
+
+		});
+
+		const sizeButtons = document.querySelectorAll(".size-btn");
+
+		sizeButtons.forEach(button => {
+
+			button.addEventListener("click", () => {
+
+				sizeButtons.forEach(btn => {
+
+					btn.classList.remove("active");
+
+				});
+
+				button.classList.add("active");
+
+				const variant = variants.find(
+					v => v.id == Number(button.dataset.variant)
+				);
+
+				selectedVariant = variant.id;
+
+				document.getElementById("selectedVariant").value = selectedVariant;
+
+				const addBtn = document.getElementById("addToCartBtn");
+
+				if (variant.stock <= 0) {
+
+					addBtn.disabled = true;
+					addBtn.innerText = "Out Of Stock";
+
+				} else {
+
+					addBtn.disabled = false;
+					addBtn.innerText = "Add To Cart";
+
+				}
+
+				console.log(variant);
+			});
+
+		});
+
+	}
+
+	const stars = document.querySelectorAll(".star");
+
+	const rateInput = document.getElementById("id_rate");
+
+	let selectedRate = 0;
+
+	stars.forEach(star=>{
+
+		star.addEventListener("click",function(){
+
+			selectedRate = Number(this.dataset.rate);
+
+			rateInput.value = selectedRate;
+
+			updateStars(selectedRate);
+
+		});
+
+	});
+
+	function updateStars(rate){
+
+		stars.forEach(star=>{
+
+			if(Number(star.dataset.rate)<=rate){
+
+				star.classList.remove("fa-regular");
+				star.classList.add("fa-solid");
+				star.classList.add("active");
+
+			}
+
+			else{
+
+				star.classList.remove("fa-solid");
+				star.classList.add("fa-regular");
+				star.classList.remove("active");
+
+			}
+
+		});
+
+	}
+
+	const quantityInput =
+	document.getElementById("quantityInput");
+
+	document
+	.getElementById("plusBtn")
+	.addEventListener("click",()=>{
+
+		quantityInput.value++;
+
+	});
+
+	document
+	.getElementById("minusBtn")
+	.addEventListener("click",()=>{
+
+		if(quantityInput.value>1){
+
+			quantityInput.value--;
+
+		}
+
+	});
+
+	function getCookie(name) {
+
+		let cookieValue = null;
+
+		if (document.cookie && document.cookie !== "") {
+
+			const cookies = document.cookie.split(";");
+
+			for (let cookie of cookies) {
+
+				cookie = cookie.trim();
+
+				if (cookie.startsWith(name + "=")) {
+
+					cookieValue = decodeURIComponent(
+						cookie.substring(name.length + 1)
+					);
+
+					break;
+
+				}
+
+			}
+
+		}
+
+		return cookieValue;
+
+	}
+
+	
+
+	document
+	.getElementById("addToCartBtn")
+	.addEventListener("click", function () {
+
+		if (!selectedVariant) {
+
+			alert("Please choose a size.");
+
+			return;
+
+		}
+
+		fetch("{% url 'add_to_cart' %}", {
+
+			method: "POST",
+
+			headers: {
+
+				"Content-Type": "application/json",
+
+				"X-CSRFToken": csrftoken
+
+			},
+
+			body: JSON.stringify({
+
+				variant_id: selectedVariant,
+
+				quantity: Number(
+					document.getElementById("quantityInput").value
+				)
+
+			})
+
+		})
+
+		.then(response => response.json())
+
+		.then(data => {
+
+			if (data.success) {
+
+				showToast(data.message, true);
+				document
+					.getElementById("cartIcon")
+					.setAttribute("data-notify", data.cart_count);
+				document
+					.getElementById("cartCount")
+					.setAttribute("data-notify", data.cart_count);
+
+
+			}
+
+			else {
+
+				showToast(data.message, false);
+
+			}
 
 		});
 

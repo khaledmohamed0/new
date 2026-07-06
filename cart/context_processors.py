@@ -13,13 +13,13 @@ def cart_data(request):
         cart_items = (
             Cart_item.objects
             .filter(cart__user=request.user)
-            .select_related("product", "cart")
-            .prefetch_related("product__product_image")
+            .select_related("product_variant", "product_variant__product","cart")
+            .prefetch_related("product_variant__product__product_image")
         )
         wishlist_items = (
             Wishlist_item.objects
             .filter(wishlist__user=request.user)
-            .select_related("product", "wishlist")
+            .select_related("product","wishlist")
             .prefetch_related("product__product_image")
         )
 
@@ -27,7 +27,7 @@ def cart_data(request):
         wishlist_count = wishlist_items.count()
 
         cart_total = sum(
-            item.product.price * item.quantity
+            item.product_variant.product.price * item.quantity
             for item in cart_items
         )
 

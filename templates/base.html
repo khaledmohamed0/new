@@ -8,6 +8,8 @@
 <!--===============================================================================================-->	
 	<link rel="icon" type="image/png" href="{% static 'images/icons/favicon.png' %}"/>
 <!--===============================================================================================-->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"/>
+
 	<link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}"/>
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{% static 'fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}"/>
@@ -35,6 +37,7 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}"/>
 	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
 <!--===============================================================================================-->
+	{% block extra_css %}{% endblock %}
 </head>
 
 <body class="animsition">
@@ -88,7 +91,7 @@
                             </div>
                                 
                             <div class="flex-c-m h-full p-l-18 p-r-25 bor5">
-                                <div class="icon-header-item cl2 hov-cl1 trans-04 p-lr-11 icon-header-noti js-show-cart" data-notify="{{ cart_count }}">
+                                <div class="icon-header-item cl2 hov-cl1 trans-04 p-lr-11 icon-header-noti js-show-cart" id="cartIcon" data-notify="{{ cart_count }}">
                                     <i class="zmdi zmdi-shopping-cart"></i>
                                 </div>
                             </div>
@@ -131,7 +134,7 @@
                     </div>
 
                     <div class="flex-c-m h-full p-lr-10 bor5">
-                        <div class="icon-header-item cl2 hov-cl1 trans-04 p-lr-11 icon-header-noti js-show-cart" data-notify="{{cart_count}}">
+                        <div class="icon-header-item cl2 hov-cl1 trans-04 p-lr-11 icon-header-noti js-show-cart" id="cartCount" data-notify="{{cart_count}}">
                             <i class="zmdi zmdi-shopping-cart"></i>
                         </div>
                     </div>
@@ -268,17 +271,17 @@
                        <li class="header-cart-item flex-w flex-t m-b-12">
 
 							<a href="{% url 'remove_from_cart' item.id %}" class="header-cart-item-img">
-								<img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+								<img src="{{ item.product_variant.product.image.url }}" alt="{{ item.product_variant.product.name }}">
 							</a>
 
 							<div class="header-cart-item-txt p-t-8">
-								<a href="{% url 'product_detail' item.product.id %}"
+								<a href="{% url 'product_detail' item.product_variant.product.id %}"
 								class="header-cart-item-name m-b-18 hov-cl1 trans-04">
-									{{ item.product.name }}
+									{{ item.product_variant.product.name }}
 								</a>
 
 								<span class="header-cart-item-info">
-									{{ item.quantity }} × {{ item.product.price }} EGP
+									{{ item.quantity }} × {{ item.product_variant.product.price }} EGP
 								</span>
 							</div>
 
@@ -667,6 +670,7 @@
 
 <!--===============================================================================================-->	
 	<script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <!--===============================================================================================-->
 	<script src="{% static 'vendor/animsition/js/animsition.min.js' %}"></script>
 <!--===============================================================================================-->
@@ -862,5 +866,34 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+
+
+	function showToast(message, success = true){
+
+		Toastify({
+
+			text: message,
+
+			duration: 2500,
+
+			gravity: "top",
+
+			position: "right",
+
+			close: true,
+
+			stopOnFocus: true,
+
+			style:{
+
+				background: success
+					? "#198754"
+					: "#dc3545"
+
+			}
+
+		}).showToast();
+
+	}
 
 </script>

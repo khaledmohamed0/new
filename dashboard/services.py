@@ -77,8 +77,8 @@ def get_products_statistics():
         Product.objects.annotate(
 
             sold=Sum(
-                "orderitem__quantity",
-                filter=Q(orderitem__order__status="delivered")
+                "variants__orderitem__quantity",
+                filter=Q(variants__orderitem__order__status="delivered")
             )
 
         )
@@ -117,9 +117,7 @@ def get_today_revenue():
 
     items = OrderItem.objects.filter(
         order__created_at__date=today
-    ).exclude(
-        order__status="cancelled"
-    )
+    ).filter(order__status="delivered")
 
     for item in items:
 
@@ -143,11 +141,7 @@ def get_month_revenue():
 
         order__created_at__month=now.month,
 
-    ).exclude(
-
-        order__status="cancelled"
-
-    )
+    ).filter(order__status="delivered")
 
     for item in items:
 
@@ -222,8 +216,8 @@ def get_top_selling_products(limit=5):
         OrderItem.objects
         .filter(order__status="delivered")
         .values(
-            "product__id",
-            "product__name",
+            "product_variant__product__id",
+            "product_variant__product__name",
         )
         .annotate(
 

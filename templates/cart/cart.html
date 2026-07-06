@@ -33,12 +33,12 @@
                                             <td class="column-1">
                                                 <a href="{% url 'remove_from_cart' item.id %}" class="remove-cart-link">
                                                     <div class="how-itemcart1">
-                                                        <img src="{{ item.product.image.url }}" alt="">
+                                                        <img src="{{ item.product_variant.product.image.url }}" alt="">
                                                     </div>
                                                 </a>
                                             </td>
-                                            <td class="column-2">{{item.product.name}}</td>
-                                            <td class="column-3">{{item.product.price}}</td>
+                                            <td class="column-2">{{ item.product_variant.product.name }}</td>
+                                            <td class="column-3">{{item.product_variant.product.price}}</td>
                                             <td class="column-4">
                                                 <div class="wrap-num-product flex-w m-l-auto m-r-0">
                                                     <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">

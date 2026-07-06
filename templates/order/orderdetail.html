@@ -69,7 +69,7 @@ Order #{{ order.id }}
 <div style="width:90px">
 
 <img
-src="{{ item.product.image.url }}"
+src="{{ item.product_variant.product.image.url }}"
 style="width:80px;height:100px;object-fit:cover;">
 
 </div>
@@ -78,7 +78,7 @@ style="width:80px;height:100px;object-fit:cover;">
 
 <h5 class="mtext-107">
 
-{{ item.product.name }}
+{{ item.product_variant.product.name }}
 
 </h5>
 

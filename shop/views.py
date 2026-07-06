@@ -4,8 +4,9 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404,redirect
 from django.http import JsonResponse
-from .models import Product,Review
+from .models import Product,Review,ProductImage,ProductVariant
 from django.db.models import Avg
+import json
 from .forms import ReviewForm
 from django.core.paginator import Paginator
 
@@ -25,26 +26,61 @@ def products(request):
     return render(request, "shop/products.html", context)
 
 def product_detail(request, id):
+
     product = get_object_or_404(Product, id=id)
+
     images = product.product_image.all()
-    reviews = Review.objects.filter(
-        product=product
-    ).select_related("user").order_by("-created_at")
+
+    reviews = (
+        Review.objects
+        .filter(product=product)
+        .select_related("user")
+        .order_by("-created_at")
+    )
+
+    variants = (
+        product.variants
+        .select_related("color", "size")
+        .filter(is_active=True)
+    )
+
+    colors = []
+
+    for variant in variants:
+        if variant.color not in colors:
+            colors.append(variant.color)
 
     form = ReviewForm()
 
+    variants_json = []
+
+    for variant in variants:
+
+        variants_json.append({
+            "id": variant.id,
+            "color_id": variant.color.id,
+            "color": variant.color.name,
+            "size": variant.size.name,
+            "stock": variant.stock,
+        })
 
     context = {
         "product": product,
+        "images": images,
         "reviews": reviews,
         "form": form,
+        "variants": variants,
+        "colors": colors,
         "review_count": product.review_product.count(),
         "average_rating": reviews.aggregate(avg=Avg("rate"))["avg"] or 0,
-        "images": images,
-
+        "variants_json": json.dumps(variants_json),
     }
 
-    return render(request, "shop/product_detail.html", context)
+    return render(
+        request,
+        "shop/product_detail.html",
+        context
+    )
 
 
 
@@ -68,22 +104,21 @@ def add_review(request, id):
                 }
             )
 
-            review.user = request.user
-            review.product = product
+            return JsonResponse({
 
-            Review.objects.update_or_create(
-                user=request.user,
-                product=product,
-                defaults={
-                    "rate": review.rate,
-                    "review": review.review,
-                }
-            )
+                "success": True,
+                "username": request.user.username,
+                "review": review.review,
+                "rate": review.rate,
+                "created_at": review.created_at.strftime("%d %b %Y"),
+
+            })
 
         return JsonResponse({
-        "success": True,
-        "username": request.user.username,
-        "review": review.review,
-        "rate": review.rate,
-        "created_at": review.created_at.strftime("%d %b %Y"),
+            "success": False,
+            "errors": form.errors
+        })
+
+    return JsonResponse({
+        "success": False
     })
