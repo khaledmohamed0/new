@@ -233,14 +233,14 @@
 						<div class="block2-pic hov-img0">
 							<img src="{{ product.image.url }}" alt="IMG-PRODUCT"  width="250" height="333">
 
-							<a href="{% url 'product_detail' product.id %}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
+							<a href="{% url 'product_detail' product.slug %}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
 								View
 							</a>
 						</div>
 
 						<div class="block2-txt flex-w flex-t p-t-14">
 							<div class="block2-txt-child1 flex-col-l ">
-								<a href="{% url 'product_detail' product.id %}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+								<a href="{% url 'product_detail' product.slug %}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
 									{{ product.name }}
 								</a>
 

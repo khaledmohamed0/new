@@ -25,9 +25,9 @@ def products(request):
 
     return render(request, "shop/products.html", context)
 
-def product_detail(request, id):
+def product_detail(request, slug):
 
-    product = get_object_or_404(Product, id=id)
+    product = get_object_or_404(Product, slug=slug)
 
     images = product.product_image.all()
 
@@ -85,9 +85,9 @@ def product_detail(request, id):
 
 
 @login_required(login_url="login")
-def add_review(request, id):
+def add_review(request, slug):
 
-    product = get_object_or_404(Product, id=id)
+    product = get_object_or_404(Product, slug=slug)
 
     if request.method == "POST":
 
