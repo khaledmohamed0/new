@@ -3,10 +3,11 @@ from django.shortcuts import render, redirect
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.db import transaction
 from django.db.models import F
 from django.contrib import messages
 from shop.models import ProductVariant
+from django.utils import timezone
+from coupon.models import Coupon
 
 
 from cart.models import Cart
@@ -15,26 +16,87 @@ from .models import Order, OrderItem
 DELIVERY_FEE = Decimal("60.00")
 
 
+from decimal import Decimal
+from django.contrib import messages
+from django.db import transaction
+from django.db.models import F
+from django.shortcuts import redirect, render
+from django.utils import timezone
+
 @transaction.atomic
 @login_required(login_url="login")
-@transaction.atomic
 def checkout(request):
 
     cart = Cart.objects.get(user=request.user)
 
-    cart_items = cart.items.select_related("product_variant").all()
+    cart_items = cart.items.select_related(
+        "product_variant",
+        "product_variant__product",
+        "product_variant__color",
+        "product_variant__size",
+    )
 
     if not cart_items.exists():
         return redirect("cart")
 
     subtotal = sum(
-        item.product_variant.product.price * item.quantity
+        item.total_price
         for item in cart_items
     )
 
-    total = subtotal + DELIVERY_FEE
+    coupon = None
+    discount = Decimal("0")
+
+    coupon_id = request.session.get("coupon_id")
+
+    if coupon_id:
+
+        try:
+
+            coupon = Coupon.objects.get(
+                id=coupon_id,
+                is_active=True
+            )
+
+            now = timezone.now()
+
+            if (
+                coupon.valid_from <= now <= coupon.valid_to
+                and coupon.used_count < coupon.usage_limit
+                and subtotal >= coupon.minimum_order
+            ):
+
+                if coupon.discount_type == "percentage":
+
+                    discount = subtotal * (
+                        coupon.value / Decimal("100")
+                    )
+
+                    if (
+                        coupon.maximum_discount
+                        and discount > coupon.maximum_discount
+                    ):
+                        discount = coupon.maximum_discount
+
+                else:
+
+                    discount = coupon.value
+
+            else:
+
+                coupon = None
+
+        except Coupon.DoesNotExist:
+
+            coupon = None
+
+    total = subtotal - discount + DELIVERY_FEE
+
+    if total < DELIVERY_FEE:
+        total = DELIVERY_FEE
 
     if request.method == "POST":
+
         for item in cart_items:
 
             variant = item.product_variant
@@ -73,6 +135,7 @@ def checkout(request):
             delivery_fee=DELIVERY_FEE,
 
             total_price=total,
+
         )
 
         order_items = []
@@ -105,20 +168,36 @@ def checkout(request):
                 stock=F("stock") - item.quantity
             )
 
+        if coupon:
+
+            coupon.used_count += 1
+            coupon.save()
+
+            del request.session["coupon_id"]
+
         cart_items.delete()
 
         return redirect("my-orders")
 
     context = {
+
         "cart_items": cart_items,
+
         "subtotal": subtotal,
+
+        "discount": discount,
+
         "delivery_fee": DELIVERY_FEE,
+
         "total": total,
+
     }
 
-    return render(request, "order/checkout.html", context)
-
-
+    return render(
+        request,
+        "order/checkout.html",
+        context,
+    )
 
 
 @login_required(login_url="login")

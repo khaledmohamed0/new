@@ -21,6 +21,7 @@ from shop import urls
 from cart import urls
 from order import urls
 from dashboard import urls
+from coupon import urls
 from account import urls
 from django.conf import settings
 from django.conf.urls.static import static
@@ -33,6 +34,7 @@ urlpatterns = [
     path("order/", include("order.urls")),
     path("account/",include("account.urls")),
     path("dashboard/",include("dashboard.urls")),
+    path("coupon/",include("coupon.urls")),
 
     
     

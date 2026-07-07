@@ -26,6 +26,13 @@ class Cart_item(models.Model):
 
     quantity = models.PositiveIntegerField(default=1)
 
+    @property
+    def total_price(self):
+        return (
+            self.product_variant.product.price *
+            self.quantity
+        )
+
     def __str__(self):
         return (
             f"{self.product_variant.product.name}"

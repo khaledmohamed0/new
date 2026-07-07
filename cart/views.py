@@ -17,8 +17,7 @@ def cart(request):
     if cart:
         cart_items = cart.items.select_related("product_variant","product_variant__product").all()
         
-        for item in cart_items:
-            item.total_price = item.product_variant.product.price * item.quantity
+        
 
 
         subtotal = sum(
@@ -195,9 +194,16 @@ def update_cart_quantity(request):
     item = Cart_item.objects.get(id=item_id)
 
     if action == "increase":
-        item.quantity += 1
+
+        if item.quantity < item.product_variant.stock:
+            item.quantity += 1
+
     elif action == "decrease":
-        item.quantity -= 1
+
+        if item.quantity > 1:
+            item.quantity -= 1
+
+        item.save()
 
     item.save()
 
@@ -205,16 +211,76 @@ def update_cart_quantity(request):
 
     cart_items = cart.items.select_related("product_variant", "product_variant__product").all()
 
+    subtotal = sum(
+        cart_item.total_price
+        for cart_item in cart_items
+    )
+
+    discount = 0
+
+    coupon_id = request.session.get("coupon_id")
+
+    if coupon_id:
+
+        try:
+
+            coupon = Coupon.objects.get(
+                id=coupon_id,
+                is_active=True
+            )
+
+            now = timezone.now()
+
+            if (
+                coupon.valid_from <= now <= coupon.valid_to
+                and coupon.used_count < coupon.usage_limit
+                and subtotal >= coupon.minimum_order
+            ):
+
+                if coupon.discount_type == "percentage":
+
+                    discount = subtotal * (
+                        coupon.value / Decimal("100")
+                    )
+
+                    if (
+                        coupon.maximum_discount
+                        and discount > coupon.maximum_discount
+                    ):
+                        discount = coupon.maximum_discount
+
+                else:
+
+                    discount = coupon.value
+
+            else:
+
+                request.session.pop("coupon_id", None)
+
+        except Coupon.DoesNotExist:
+
+            request.session.pop("coupon_id", None)
+
+    total = subtotal - discount
+
+    if total < 0:
+        total = 0
+
 
 
     
-
     return JsonResponse({
-    "success": True,
-    "quantity": item.quantity,
-    "item_total": item.product_variant.product.price * item.quantity,
-    
 
-    
-    
-})
+        "success": True,
+
+        "quantity": item.quantity,
+
+        "item_total": float(item.total_price),
+
+        "subtotal": float(subtotal),
+
+        "discount": float(discount),
+
+        "total": float(total),
+
+    })

@@ -827,6 +827,15 @@ function updateQuantity(itemId, action, input) {
 			document.getElementById(`item-total-${itemId}`).innerText =
 				data.item_total + " EGP";
 
+			document.getElementById("subtotal").innerText =
+				data.subtotal + " EGP";
+
+			document.getElementById("discount").innerText =
+				data.discount + " EGP";
+
+			document.getElementById("total").innerText =
+				data.total + " EGP";
+
 		}
 
 	});
